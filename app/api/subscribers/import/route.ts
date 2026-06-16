@@ -3,15 +3,15 @@ import { getCurrentOrganizationFromRequest } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+const rowSchema = z.object({
+  email: z.string().email(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
 const importSchema = z.object({
   listId: z.string(),
-  subscribers: z.array(
-    z.object({
-      email: z.string().email(),
-      firstName: z.string().optional(),
-      lastName: z.string().optional(),
-    })
-  ),
+  subscribers: z.array(z.unknown()),
 });
 
 export async function POST(request: Request) {
@@ -24,8 +24,14 @@ export async function POST(request: Request) {
   const parsed = importSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues }, { status: 400 });
+    return NextResponse.json({ error: "Format request tidak valid" }, { status: 400 });
   }
+
+  // Filter out rows with invalid emails instead of rejecting the whole batch
+  const validRows = parsed.data.subscribers
+    .map((r) => rowSchema.safeParse(r))
+    .filter((r) => r.success)
+    .map((r) => (r as { success: true; data: z.infer<typeof rowSchema> }).data);
 
   const list = await prisma.subscriberList.findFirst({
     where: { id: parsed.data.listId, organizationId: organization.id },
@@ -53,9 +59,7 @@ export async function POST(request: Request) {
   }
 
   // Only import up to available quota
-  const toImport = unlimited
-    ? parsed.data.subscribers
-    : parsed.data.subscribers.slice(0, available);
+  const toImport = unlimited ? validRows : validRows.slice(0, available);
 
   let created = 0;
   let skipped = 0;
@@ -77,6 +81,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const truncated = parsed.data.subscribers.length - toImport.length;
-  return NextResponse.json({ created, skipped, truncated });
+  const invalidCount = parsed.data.subscribers.length - validRows.length;
+  const truncated = validRows.length - toImport.length;
+  return NextResponse.json({ created, skipped, truncated, invalidCount });
 }

@@ -69,7 +69,7 @@ function parseCsvText(text: string): ParsedRow[] {
     if (status === "unsubscribed" || status === "bounced") continue;
 
     const email = (emailIdx >= 0 ? fields[emailIdx] : "") ?? "";
-    if (!email || !email.includes("@")) continue;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) continue;
 
     let firstName: string | undefined;
     let lastName: string | undefined;
@@ -131,11 +131,12 @@ export function ImportCsvForm({ listId }: { listId: string }) {
         body: JSON.stringify({ listId, subscribers: rows }),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Gagal import");
+      if (!res.ok) throw new Error(typeof result.error === "string" ? result.error : "Gagal import");
       toast.success(
         `Berhasil import ${result.created} subscriber.` +
           (result.skipped > 0 ? ` ${result.skipped} dilewati (duplikat).` : "") +
-          (result.truncated > 0 ? ` ${result.truncated} dipotong (kuota penuh).` : "")
+          (result.truncated > 0 ? ` ${result.truncated} dipotong (kuota penuh).` : "") +
+          (result.invalidCount > 0 ? ` ${result.invalidCount} email tidak valid dilewati.` : "")
       );
       setRows([]);
       setFileName("");
