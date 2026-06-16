@@ -43,8 +43,9 @@ export async function POST(request: Request) {
     },
   });
 
-  const available = organization.quotaSubscribers - currentCount;
-  if (available <= 0) {
+  const unlimited = organization.quotaSubscribers === -1;
+  const available = unlimited ? Infinity : organization.quotaSubscribers - currentCount;
+  if (!unlimited && available <= 0) {
     return NextResponse.json(
       { error: `Kuota subscriber (${organization.quotaSubscribers}) sudah penuh. Upgrade plan untuk menambah lebih banyak subscriber.` },
       { status: 403 }
@@ -52,7 +53,9 @@ export async function POST(request: Request) {
   }
 
   // Only import up to available quota
-  const toImport = parsed.data.subscribers.slice(0, available);
+  const toImport = unlimited
+    ? parsed.data.subscribers
+    : parsed.data.subscribers.slice(0, available);
 
   let created = 0;
   let skipped = 0;

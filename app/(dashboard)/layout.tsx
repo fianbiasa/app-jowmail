@@ -10,6 +10,7 @@ import {
   List,
   FileText,
   Settings,
+  Shield,
 } from "lucide-react";
 
 const navItems = [
@@ -52,6 +53,15 @@ export default async function DashboardLayout({
               {item.label}
             </Link>
           ))}
+          {session.user?.isSuperAdmin && (
+            <Link
+              href="/admin/organizations"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 mt-4 border-t border-slate-100 pt-4"
+            >
+              <Shield className="h-4 w-4" />
+              Admin Panel
+            </Link>
+          )}
         </nav>
       </aside>
 

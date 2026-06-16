@@ -38,14 +38,16 @@ export async function POST(
     );
   }
 
-  // Quota check: monthly email limit
+  // Quota check: monthly email limit (-1 = unlimited)
   const subscriberCount = campaign.list.subscribers.length;
-  const remaining = organization.quotaEmailsPerMonth - organization.emailsSentThisMonth;
-  if (remaining < subscriberCount) {
-    return NextResponse.json(
-      { error: `Kuota email bulanan tidak cukup. Tersisa ${remaining} dari ${organization.quotaEmailsPerMonth}. Butuh ${subscriberCount}.` },
-      { status: 403 }
-    );
+  if (organization.quotaEmailsPerMonth !== -1) {
+    const remaining = organization.quotaEmailsPerMonth - organization.emailsSentThisMonth;
+    if (remaining < subscriberCount) {
+      return NextResponse.json(
+        { error: `Kuota email bulanan tidak cukup. Tersisa ${remaining} dari ${organization.quotaEmailsPerMonth}. Butuh ${subscriberCount}.` },
+        { status: 403 }
+      );
+    }
   }
 
   if (campaign.list.subscribers.length === 0) {

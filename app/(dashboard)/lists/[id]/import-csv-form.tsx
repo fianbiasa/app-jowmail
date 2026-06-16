@@ -12,16 +12,79 @@ interface ParsedRow {
   lastName?: string;
 }
 
+function parseCsvLine(line: string): string[] {
+  const fields: string[] = [];
+  let i = 0;
+  while (i <= line.length) {
+    if (line[i] === '"') {
+      let field = "";
+      i++;
+      while (i < line.length) {
+        if (line[i] === '"' && line[i + 1] === '"') { field += '"'; i += 2; }
+        else if (line[i] === '"') { i++; break; }
+        else field += line[i++];
+      }
+      fields.push(field.trim());
+      if (line[i] === ",") i++;
+    } else {
+      const end = line.indexOf(",", i);
+      if (end === -1) { fields.push(line.slice(i).trim()); break; }
+      fields.push(line.slice(i, end).trim());
+      i = end + 1;
+    }
+  }
+  return fields;
+}
+
 function parseCsvText(text: string): ParsedRow[] {
-  const lines = text.trim().split(/\r?\n/);
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  if (lines.length === 0) return [];
+
+  const firstFields = parseCsvLine(lines[0]);
+  const hasHeader = firstFields.some((f) =>
+    /^(email|name|first.?name|last.?name|status)/i.test(f)
+  );
+
+  let emailIdx = -1, nameIdx = -1, firstIdx = -1, lastIdx = -1, statusIdx = -1;
+  let startRow = 0;
+
+  if (hasHeader) {
+    startRow = 1;
+    firstFields.forEach((col, i) => {
+      const c = col.toLowerCase().replace(/[_\s-]/g, "");
+      if (c === "email") emailIdx = i;
+      else if (c === "name") nameIdx = i;
+      else if (c === "firstname") firstIdx = i;
+      else if (c === "lastname") lastIdx = i;
+      else if (c === "status") statusIdx = i;
+    });
+  } else {
+    emailIdx = 0; firstIdx = 1; lastIdx = 2;
+  }
+
   const rows: ParsedRow[] = [];
-  const start = /^(email|e-?mail)/i.test(lines[0]?.split(",")[0] ?? "") ? 1 : 0;
-  for (let i = start; i < lines.length; i++) {
-    const [email, firstName, lastName] = lines[i]
-      .split(",")
-      .map((s) => s.trim().replace(/^["']|["']$/g, ""));
-    if (email && email.includes("@"))
-      rows.push({ email, firstName: firstName || undefined, lastName: lastName || undefined });
+  for (let i = startRow; i < lines.length; i++) {
+    const fields = parseCsvLine(lines[i]);
+    const status = statusIdx >= 0 ? fields[statusIdx]?.toLowerCase() : "";
+    if (status === "unsubscribed" || status === "bounced") continue;
+
+    const email = (emailIdx >= 0 ? fields[emailIdx] : "") ?? "";
+    if (!email || !email.includes("@")) continue;
+
+    let firstName: string | undefined;
+    let lastName: string | undefined;
+
+    if (nameIdx >= 0) {
+      const full = fields[nameIdx]?.trim() ?? "";
+      const sp = full.indexOf(" ");
+      if (sp >= 0) { firstName = full.slice(0, sp); lastName = full.slice(sp + 1); }
+      else firstName = full || undefined;
+    } else {
+      firstName = (firstIdx >= 0 ? fields[firstIdx] : undefined) || undefined;
+      lastName = (lastIdx >= 0 ? fields[lastIdx] : undefined) || undefined;
+    }
+
+    rows.push({ email, firstName, lastName });
   }
   return rows;
 }
@@ -103,7 +166,7 @@ export function ImportCsvForm({ listId }: { listId: string }) {
           <span className="text-indigo-600">klik untuk pilih</span>
         </p>
         <p className="text-xs text-slate-400">
-          Format: email, first_name, last_name (baris header opsional)
+          Mendukung kolom: email, name, first_name, last_name, status
         </p>
         <input
           ref={fileRef}

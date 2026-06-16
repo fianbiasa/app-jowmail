@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  if (currentCount >= list.organization.quotaSubscribers) {
+  if (list.organization.quotaSubscribers !== -1 && currentCount >= list.organization.quotaSubscribers) {
     return NextResponse.json({ error: "Pendaftaran sementara ditutup." }, { status: 403 });
   }
 
