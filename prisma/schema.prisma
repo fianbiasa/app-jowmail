@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id             String               @id @default(cuid())
+  email          String               @unique
+  name           String?
+  passwordHash   String?
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  memberships    OrganizationMember[]
+  auditLogs      AuditLog[]
+}
+
+model Organization {
+  id                   String               @id @default(cuid())
+  name                 String
+  slug                 String               @unique
+  // Postal credentials (API key stored encrypted)
+  postalApiKey         String?              @db.Text
+  postalApiKeyIv       String?              // IV for AES-256-GCM
+  postalBaseUrl        String               @default("https://mail.jowmail.com")
+  postalServer         String?
+  // SaaS plan & quota
+  plan                 String               @default("free") // free, pro, enterprise
+  quotaSubscribers     Int                  @default(500)
+  quotaEmailsPerMonth  Int                  @default(5000)
+  emailsSentThisMonth  Int                  @default(0)
+  quotaResetAt         DateTime             @default(now())
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  members              OrganizationMember[]
+  lists                SubscriberList[]
+  templates            Template[]
+  campaigns            Campaign[]
+  invitations          Invitation[]
+  auditLogs            AuditLog[]
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           String       // owner, admin, member
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+}
+
+model Invitation {
+  id             String       @id @default(cuid())
+  organizationId String
+  email          String
+  role           String       @default("member") // admin, member
+  token          String       @unique @default(cuid())
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([token])
+}
+
+model SubscriberList {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  subscribers    Subscriber[]
+  campaigns      Campaign[]
+
+  @@index([organizationId])
+}
+
+model Subscriber {
+  id           String         @id @default(cuid())
+  listId       String
+  email        String
+  firstName    String?
+  lastName     String?
+  status       String         @default("subscribed") // subscribed, unsubscribed, bounced, complained
+  customFields Json?          @default("{}")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  list         SubscriberList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  logs         CampaignLog[]
+
+  @@unique([listId, email])
+  @@index([listId])
+  @@index([email])
+}
+
+model Template {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  subject        String
+  htmlContent    String       @db.Text
+  plainContent   String?      @db.Text
+  category       String       @default("general") // general, newsletter, promo, transactional
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaigns      Campaign[]
+
+  @@index([organizationId])
+  @@index([category])
+}
+
+model Campaign {
+  id             String         @id @default(cuid())
+  organizationId String
+  listId         String
+  templateId     String
+  name           String
+  subject        String
+  fromName       String
+  fromEmail      String
+  replyTo        String?
+  htmlContent    String?        @db.Text  // campaign body (WYSIWYG output, injected into template)
+  plainContent   String?        @db.Text
+  status         String         @default("draft") // draft, scheduled, queued, sending, sent, paused, failed
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  list           SubscriberList @relation(fields: [listId], references: [id], onDelete: Restrict)
+  template       Template       @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  logs           CampaignLog[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model CampaignLog {
+  id              String     @id @default(cuid())
+  campaignId      String
+  subscriberId    String
+  postalMessageId String?
+  status          String     @default("queued") // queued, sent, delivered, opened, clicked, bounced, complained, failed
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  bounceReason    String?
+  metadata        Json?      @default("{}")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  campaign        Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  subscriber      Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([subscriberId])
+  @@index([postalMessageId])
+  @@index([status])
+}
+
+model WebhookEvent {
+  id          String    @id @default(cuid())
+  eventType   String
+  payload     Json
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([processed])
+  @@index([eventType])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  userId         String?
+  action         String       // e.g. "campaign.sent", "subscriber.imported", "settings.updated"
+  targetType     String?      // e.g. "Campaign", "Subscriber"
+  targetId       String?
+  metadata       Json?        @default("{}")
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([action])
+}
