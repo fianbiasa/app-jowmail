@@ -3,23 +3,25 @@ import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rate-limit";
 
 // Postal webhook event payload shape (simplified)
+interface PostalMessage {
+  id: number;
+  token: string;
+  direction: string;
+  message_id: string;
+  to: string;
+  from: string;
+  subject: string;
+  timestamp: number;
+}
+
 interface PostalWebhookPayload {
   event: string;
   timestamp: number;
   payload: {
-    message?: {
-      id: number;
-      token: string;
-      direction: string;
-      message_id: string;
-      to: string;
-      from: string;
-      subject: string;
-      timestamp: number;
-    };
-    // bounce/complaint details
+    message?: PostalMessage;
+    original_message?: PostalMessage; // present in MessageBounced
+    bounce?: { id: number; subject?: string; to?: string };
     details?: string;
-    // click details
     url?: string;
     ip_address?: string;
     user_agent?: string;
@@ -68,8 +70,8 @@ export async function POST(request: NextRequest) {
 async function processWebhookEvent(body: PostalWebhookPayload) {
   const { event, payload } = body;
 
-  // Find the campaign log by Postal message token
-  const token = payload.message?.token;
+  // MessageBounced uses original_message.token; all others use message.token
+  const token = payload.original_message?.token ?? payload.message?.token;
   if (!token) return;
 
   const log = await prisma.campaignLog.findFirst({
@@ -131,7 +133,7 @@ async function processWebhookEvent(body: PostalWebhookPayload) {
         where: { id: log.id },
         data: {
           status: "bounced",
-          bounceReason: payload.details || "Hard bounce",
+          bounceReason: payload.bounce?.subject || payload.details || "Hard bounce",
         },
       });
       // Mark subscriber as bounced
