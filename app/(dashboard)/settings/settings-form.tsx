@@ -5,6 +5,8 @@ import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 import { toast } from "sonner";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
@@ -75,30 +77,30 @@ export function SettingsForm({ organization, updateAction }: SettingsFormProps) 
     }
   }
 
-  const planBadge: Record<string, string> = {
-    free: "bg-slate-100 text-slate-700",
-    pro: "bg-blue-100 text-blue-700",
-    enterprise: "bg-purple-100 text-purple-700",
+  const planVariant: Record<string, VariantProps<typeof badgeVariants>["variant"]> = {
+    free: "neutral",
+    pro: "cyan",
+    enterprise: "purple",
   };
 
   return (
     <div className="space-y-8">
       {/* Plan Info */}
-      <div className="rounded-lg border p-4 bg-slate-50 space-y-3">
+      <div className="border-3 border-foreground p-4 bg-muted space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium">Plan Saat Ini</h3>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${planBadge[organization.plan] || planBadge.free}`}>
+          <h3 className="font-black uppercase text-sm">Plan Saat Ini</h3>
+          <Badge variant={planVariant[organization.plan] || "neutral"}>
             {organization.plan}
-          </span>
+          </Badge>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-slate-500">Subscriber</p>
-            <p className="font-medium">{organization.quotaSubscribers.toLocaleString()} maks.</p>
+            <p className="text-muted-foreground font-semibold">Subscriber</p>
+            <p className="font-bold">{organization.quotaSubscribers.toLocaleString()} maks.</p>
           </div>
           <div>
-            <p className="text-slate-500">Email / bulan</p>
-            <p className="font-medium">
+            <p className="text-muted-foreground font-semibold">Email / bulan</p>
+            <p className="font-bold">
               {organization.emailsSentThisMonth.toLocaleString()} / {organization.quotaEmailsPerMonth.toLocaleString()}
             </p>
           </div>
@@ -117,11 +119,11 @@ export function SettingsForm({ organization, updateAction }: SettingsFormProps) 
         <div className="space-y-2">
           <Label htmlFor="slug">Slug</Label>
           <Input id="slug" value={organization.slug} disabled />
-          <p className="text-xs text-slate-500">Slug tidak dapat diubah.</p>
+          <p className="text-xs text-muted-foreground font-semibold">Slug tidak dapat diubah.</p>
         </div>
 
-        <hr />
-        <h3 className="font-medium text-slate-800">Konfigurasi Postal Mail Server</h3>
+        <hr className="border-t-2 border-foreground" />
+        <h3 className="font-black uppercase text-sm">Konfigurasi Postal Mail Server</h3>
 
         <div className="space-y-2">
           <Label htmlFor="postalBaseUrl">Postal Base URL</Label>
@@ -147,7 +149,7 @@ export function SettingsForm({ organization, updateAction }: SettingsFormProps) 
             placeholder="X-Server-API-Key"
             required
           />
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground font-semibold">
             API key dari halaman Credentials di Postal. Disimpan terenkripsi (AES-256).
           </p>
         </div>
@@ -171,8 +173,8 @@ export function SettingsForm({ organization, updateAction }: SettingsFormProps) 
               "Test Koneksi"
             )}
           </Button>
-          {testResult === "success" && <CheckCircle className="h-5 w-5 text-green-600" />}
-          {testResult === "error" && <XCircle className="h-5 w-5 text-red-600" />}
+          {testResult === "success" && <CheckCircle className="h-5 w-5 text-lime" />}
+          {testResult === "error" && <XCircle className="h-5 w-5 text-red" />}
         </div>
       </form>
     </div>

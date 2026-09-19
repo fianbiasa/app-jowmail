@@ -3,6 +3,14 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "sonner";
 import { UploadCloud, FileText, X, CheckCircle } from "lucide-react";
 
@@ -155,18 +163,18 @@ export function ImportCsvForm({ listId }: { listId: string }) {
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed cursor-pointer py-10 transition-colors ${
+        className={`flex flex-col items-center justify-center gap-2 border-3 border-dashed cursor-pointer py-10 transition-colors ${
           isDragging
-            ? "border-indigo-500 bg-indigo-50"
-            : "border-slate-200 hover:border-indigo-400 hover:bg-slate-50"
+            ? "border-foreground bg-lime/30"
+            : "border-foreground/40 hover:border-foreground hover:bg-muted"
         }`}
       >
-        <UploadCloud className={`h-10 w-10 ${isDragging ? "text-indigo-500" : "text-slate-300"}`} />
-        <p className="text-sm font-medium text-slate-700">
+        <UploadCloud className={`h-10 w-10 ${isDragging ? "text-foreground" : "text-foreground/40"}`} />
+        <p className="text-sm font-bold">
           Drag & drop file CSV, atau{" "}
-          <span className="text-indigo-600">klik untuk pilih</span>
+          <span className="underline decoration-2">klik untuk pilih</span>
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-muted-foreground font-semibold">
           Mendukung kolom: email, name, first_name, last_name, status
         </p>
         <input
@@ -185,44 +193,44 @@ export function ImportCsvForm({ listId }: { listId: string }) {
       {rows.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-slate-700">
-              <FileText className="h-4 w-4 text-indigo-500" />
-              <span className="font-medium">{fileName}</span>
-              <span className="text-slate-300">·</span>
-              <span className="font-semibold text-indigo-600">
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <FileText className="h-4 w-4" />
+              <span>{fileName}</span>
+              <span className="text-muted-foreground">·</span>
+              <span className="font-black">
                 {rows.length} email valid
               </span>
             </div>
             <button
               type="button"
               onClick={() => { setRows([]); setFileName(""); }}
-              className="text-slate-400 hover:text-slate-700 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="rounded-lg border overflow-hidden text-sm">
-            <table className="w-full">
-              <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                <tr>
-                  <th className="px-4 py-2.5 text-left">Email</th>
-                  <th className="px-4 py-2.5 text-left">Nama Depan</th>
-                  <th className="px-4 py-2.5 text-left">Nama Belakang</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
+          <div className="text-sm">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Nama Depan</TableHead>
+                  <TableHead>Nama Belakang</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {rows.slice(0, 5).map((r, i) => (
-                  <tr key={i} className="hover:bg-slate-50">
-                    <td className="px-4 py-2 text-slate-700">{r.email}</td>
-                    <td className="px-4 py-2 text-slate-400">{r.firstName || "—"}</td>
-                    <td className="px-4 py-2 text-slate-400">{r.lastName || "—"}</td>
-                  </tr>
+                  <TableRow key={i}>
+                    <TableCell className="font-semibold">{r.email}</TableCell>
+                    <TableCell className="text-muted-foreground">{r.firstName || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{r.lastName || "—"}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
             {rows.length > 5 && (
-              <p className="px-4 py-2 bg-slate-50 text-xs text-slate-400 text-center border-t">
+              <p className="px-4 py-2 border-t-2 border-foreground bg-muted text-xs font-bold text-muted-foreground text-center">
                 + {rows.length - 5} baris lainnya tidak ditampilkan
               </p>
             )}

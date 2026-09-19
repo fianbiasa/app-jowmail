@@ -50,10 +50,10 @@ function ToolbarButton({
       }}
       title={title}
       className={cn(
-        "p-1.5 rounded text-sm transition-colors",
+        "p-1.5 border-2 text-sm transition-colors",
         active
-          ? "bg-slate-900 text-white"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          ? "bg-foreground text-background border-foreground"
+          : "border-transparent text-foreground hover:border-foreground hover:bg-muted"
       )}
     >
       {children}
@@ -97,9 +97,9 @@ export function RichTextEditor({
   }
 
   return (
-    <div className={cn("rounded-lg border border-input", className)}>
+    <div className={cn("border-3 border-input", className)}>
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-0.5 border-b p-1.5 bg-slate-50 rounded-t-lg">
+      <div className="flex flex-wrap gap-0.5 border-b-3 border-input p-1.5 bg-muted">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           active={editor.isActive("heading", { level: 1 })}
@@ -115,7 +115,7 @@ export function RichTextEditor({
           <Heading2 className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="w-px h-6 bg-slate-200 mx-1 self-center" />
+        <div className="w-px h-6 bg-foreground/30 mx-1 self-center" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -139,7 +139,7 @@ export function RichTextEditor({
           <UnderlineIcon className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="w-px h-6 bg-slate-200 mx-1 self-center" />
+        <div className="w-px h-6 bg-foreground/30 mx-1 self-center" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -163,7 +163,7 @@ export function RichTextEditor({
           <AlignRight className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="w-px h-6 bg-slate-200 mx-1 self-center" />
+        <div className="w-px h-6 bg-foreground/30 mx-1 self-center" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -180,7 +180,7 @@ export function RichTextEditor({
           <ListOrdered className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="w-px h-6 bg-slate-200 mx-1 self-center" />
+        <div className="w-px h-6 bg-foreground/30 mx-1 self-center" />
 
         <ToolbarButton
           onClick={setLink}
@@ -190,7 +190,7 @@ export function RichTextEditor({
           <LinkIcon className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="w-px h-6 bg-slate-200 mx-1 self-center" />
+        <div className="w-px h-6 bg-foreground/30 mx-1 self-center" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}

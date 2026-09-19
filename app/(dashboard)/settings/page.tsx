@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { Badge } from "@/components/ui/badge";
 
 export default async function SettingsPage() {
   const organization = await getCurrentOrganization();
@@ -37,8 +38,8 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Pengaturan</h1>
-        <p className="text-slate-600">
+        <h1 className="text-2xl">Pengaturan</h1>
+        <p className="text-muted-foreground">
           Kelola organisasi, Postal API, dan anggota tim.
         </p>
       </div>
@@ -61,16 +62,16 @@ export default async function SettingsPage() {
           <CardDescription>Kelola akses anggota organisasi.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="divide-y">
+          <div>
             {members.map((m) => (
-              <div key={m.id} className="flex items-center justify-between py-3">
+              <div key={m.id} className="flex items-center justify-between py-3 border-b-2 border-dashed border-foreground/20 last:border-b-0">
                 <div>
-                  <p className="font-medium text-sm">{m.user.name || m.user.email}</p>
-                  <p className="text-xs text-slate-500">{m.user.email}</p>
+                  <p className="font-bold text-sm">{m.user.name || m.user.email}</p>
+                  <p className="text-xs text-muted-foreground">{m.user.email}</p>
                 </div>
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium capitalize">
+                <Badge variant={m.role === "owner" ? "purple" : m.role === "admin" ? "cyan" : "neutral"}>
                   {m.role}
-                </span>
+                </Badge>
               </div>
             ))}
           </div>

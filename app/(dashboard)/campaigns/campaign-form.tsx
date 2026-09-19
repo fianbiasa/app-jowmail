@@ -114,8 +114,8 @@ export function CampaignForm({ lists, templates, campaign }: CampaignFormProps) 
 
   if (lists.length === 0 || templates.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed p-8 text-center">
-        <p className="text-slate-600">
+      <div className="border-3 border-dashed border-foreground p-8 text-center">
+        <p className="font-bold text-muted-foreground">
           Anda perlu membuat minimal satu list dan satu template terlebih dahulu.
         </p>
       </div>
@@ -166,7 +166,7 @@ export function CampaignForm({ lists, templates, campaign }: CampaignFormProps) 
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-slate-500">Template menentukan layout & styling email.</p>
+          <p className="text-xs text-muted-foreground font-semibold">Template menentukan layout & styling email.</p>
         </div>
       </div>
 
@@ -179,7 +179,7 @@ export function CampaignForm({ lists, templates, campaign }: CampaignFormProps) 
           placeholder="Halo {{full_name}}, ada kabar menarik!"
           required
         />
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground font-semibold">
           Tersedia: {"{{"} full_name {"}}"}, {"{{"} first_name {"}}"}, {"{{"} last_name {"}}"}, {"{{"} email {"}}"}
         </p>
       </div>
@@ -221,7 +221,7 @@ export function CampaignForm({ lists, templates, campaign }: CampaignFormProps) 
 
       <div className="space-y-2">
         <Label>Konten Email</Label>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground font-semibold">
           Tulis isi email. Konten ini akan dimasukkan ke dalam template yang dipilih.
           Shortcode: {"{{"} full_name {"}}"}, {"{{"} first_name {"}}"}, {"{{"} email {"}}"}, {"{{"} unsubscribe_url {"}}"}
         </p>
@@ -240,7 +240,7 @@ export function CampaignForm({ lists, templates, campaign }: CampaignFormProps) 
           type="datetime-local"
           defaultValue={defaultScheduledAt}
         />
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground font-semibold">
           Kosongkan untuk menyimpan sebagai draft. Isi untuk menjadwalkan pengiriman otomatis.
         </p>
       </div>

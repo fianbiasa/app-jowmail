@@ -22,20 +22,22 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { CampaignActions } from "./campaign-actions";
 import { CampaignChart } from "./campaign-chart";
 import { Suspense } from "react";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 
 const PAGE_SIZE = 50;
 
-function getStatusColor(status: string) {
+function getStatusVariant(status: string): VariantProps<typeof badgeVariants>["variant"] {
   switch (status) {
-    case "queued":     return "bg-slate-100 text-slate-700";
-    case "sent":       return "bg-blue-100 text-blue-700";
-    case "delivered":  return "bg-green-100 text-green-700";
-    case "opened":     return "bg-purple-100 text-purple-700";
-    case "clicked":    return "bg-indigo-100 text-indigo-700";
-    case "bounced":    return "bg-red-100 text-red-700";
-    case "complained": return "bg-orange-100 text-orange-700";
-    case "failed":     return "bg-red-100 text-red-700";
-    default:           return "bg-slate-100 text-slate-700";
+    case "queued":     return "neutral";
+    case "sent":       return "cyan";
+    case "delivered":  return "lime";
+    case "opened":     return "purple";
+    case "clicked":    return "pink";
+    case "bounced":    return "red";
+    case "complained": return "orange";
+    case "failed":     return "red";
+    default:           return "neutral";
   }
 }
 
@@ -150,8 +152,8 @@ export default async function CampaignDetailPage({
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{campaign.name}</h1>
-          <p className="text-slate-600">{campaign.list.name} · {campaign.template.name}</p>
+          <h1 className="text-2xl">{campaign.name}</h1>
+          <p className="text-muted-foreground">{campaign.list.name} · {campaign.template.name}</p>
         </div>
       </div>
 
@@ -171,16 +173,16 @@ export default async function CampaignDetailPage({
           { label: "Terkirim", value: sent,     color: "" },
           { label: "Dibuka",   value: opened,   color: "", sub: `${openRate}% open rate` },
           { label: "Diklik",   value: clicked,  color: "", sub: `${clickRate}% click rate` },
-          { label: "Bounced",  value: bounced,  color: "text-red-600" },
-          { label: "Gagal",    value: failed,   color: "text-slate-400" },
+          { label: "Bounced",  value: bounced,  color: "text-red" },
+          { label: "Gagal",    value: failed,   color: "text-muted-foreground" },
         ].map((s) => (
           <Card key={s.label}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">{s.label}</CardTitle>
+            <CardHeader>
+              <CardTitle className="text-sm">{s.label}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${s.color}`}>{s.value.toLocaleString("id-ID")}</div>
-              {s.sub && <p className="text-xs text-slate-500 mt-0.5">{s.sub}</p>}
+              <div className={`text-2xl font-black ${s.color}`}>{s.value.toLocaleString("id-ID")}</div>
+              {s.sub && <p className="text-xs text-muted-foreground mt-0.5 font-bold">{s.sub}</p>}
             </CardContent>
           </Card>
         ))}
@@ -210,14 +212,14 @@ export default async function CampaignDetailPage({
             <div className="space-y-2">
               {topLinks.map(({ url, clicks }, i) => (
                 <div key={url} className="flex items-center gap-3">
-                  <span className="text-xs text-slate-400 w-5 text-right">{i + 1}</span>
+                  <span className="text-xs text-muted-foreground font-bold w-5 text-right">{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <a href={url} target="_blank" rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:underline truncate block">
+                      className="text-sm font-bold underline decoration-2 truncate block">
                       {url}
                     </a>
                   </div>
-                  <span className="text-sm font-semibold tabular-nums">{clicks}</span>
+                  <span className="text-sm font-black tabular-nums">{clicks}</span>
                 </div>
               ))}
             </div>
@@ -251,20 +253,18 @@ export default async function CampaignDetailPage({
             <TableBody>
               {logs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-slate-500 py-10">
+                  <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
                     {search ? "Tidak ada hasil." : "Campaign belum dikirim."}
                   </TableCell>
                 </TableRow>
               ) : (
                 logs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell className="font-medium pl-6">{log.subscriber.email}</TableCell>
+                    <TableCell className="font-bold pl-6">{log.subscriber.email}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${getStatusColor(log.status)}`}>
-                        {log.status}
-                      </span>
+                      <Badge variant={getStatusVariant(log.status)}>{log.status}</Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-slate-500">{log.postalMessageId || "—"}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{log.postalMessageId || "—"}</TableCell>
                     <TableCell className="pr-6">
                       {log.sentAt ? new Date(log.sentAt).toLocaleString("id-ID") : "—"}
                     </TableCell>
@@ -275,8 +275,8 @@ export default async function CampaignDetailPage({
           </Table>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t bg-slate-50/50">
-              <p className="text-sm text-slate-500">
+            <div className="flex items-center justify-between px-6 py-4 border-t-4 border-foreground bg-muted">
+              <p className="text-sm font-bold text-muted-foreground">
                 Menampilkan {skip + 1}–{Math.min(skip + PAGE_SIZE, logTotal)} dari {logTotal.toLocaleString("id-ID")}
               </p>
               <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ export default async function CampaignDetailPage({
                   className={buttonVariants({ variant: "outline", size: "sm" }) + (page <= 1 ? " pointer-events-none opacity-40" : "")}>
                   <ChevronLeft className="h-4 w-4" /> Prev
                 </Link>
-                <span className="text-sm text-slate-600 px-1">{page} / {totalPages}</span>
+                <span className="text-sm font-bold px-1">{page} / {totalPages}</span>
                 <Link href={buildUrl(page + 1)} aria-disabled={page >= totalPages}
                   className={buttonVariants({ variant: "outline", size: "sm" }) + (page >= totalPages ? " pointer-events-none opacity-40" : "")}>
                   Next <ChevronRight className="h-4 w-4" />

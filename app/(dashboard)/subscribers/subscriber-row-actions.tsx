@@ -6,6 +6,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -114,16 +121,20 @@ export function SubscriberRowActions({
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <select
+              <Select
                 value={fields.status}
-                onChange={(e) => setFields({ ...fields, status: e.target.value })}
-                className="w-full h-9 rounded-lg border border-input bg-transparent px-3 text-sm"
+                onValueChange={(v) => setFields({ ...fields, status: v ?? fields.status })}
               >
-                <option value="subscribed">Subscribed</option>
-                <option value="unsubscribed">Unsubscribed</option>
-                <option value="bounced">Bounced</option>
-                <option value="complained">Complained</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="subscribed">Subscribed</SelectItem>
+                  <SelectItem value="unsubscribed">Unsubscribed</SelectItem>
+                  <SelectItem value="bounced">Bounced</SelectItem>
+                  <SelectItem value="complained">Complained</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit" disabled={saving}>
               {saving ? "Menyimpan..." : "Simpan"}
@@ -137,7 +148,7 @@ export function SubscriberRowActions({
         size="sm"
         onClick={handleDelete}
         disabled={deleting}
-        className="text-red-600 hover:text-red-700 hover:border-red-300"
+        className="text-red hover:bg-red hover:text-white"
       >
         {deleting ? "..." : "Hapus"}
       </Button>

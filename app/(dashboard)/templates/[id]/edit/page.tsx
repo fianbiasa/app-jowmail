@@ -33,8 +33,8 @@ export default async function EditTemplatePage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Template</h1>
-        <p className="text-slate-600">Perbarui template email.</p>
+        <h1 className="text-2xl">Edit Template</h1>
+        <p className="text-muted-foreground">Perbarui template email.</p>
       </div>
 
       <Card>

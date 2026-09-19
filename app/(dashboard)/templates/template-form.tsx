@@ -121,10 +121,10 @@ export function TemplateForm({ template }: TemplateFormProps) {
               Preview
             </DialogTrigger>
             <DialogContent className="max-w-3xl h-[85vh] flex flex-col p-0">
-              <DialogHeader className="px-6 pt-6 pb-4 border-b">
+              <DialogHeader className="px-6 pt-6 pb-4 border-b-4 border-foreground">
                 <DialogTitle>Preview Template</DialogTitle>
               </DialogHeader>
-              <div className="flex-1 overflow-hidden bg-slate-100 p-4">
+              <div className="flex-1 overflow-hidden bg-muted p-4">
                 <iframe
                   srcDoc={htmlContent
                     .replace("{{content}}", PLACEHOLDER_CONTENT)
@@ -133,7 +133,7 @@ export function TemplateForm({ template }: TemplateFormProps) {
                     .replace(/\{\{last_name\}\}/g, "Santoso")
                     .replace(/\{\{email\}\}/g, "budi@example.com")
                     .replace(/\{\{unsubscribe_url\}\}/g, "#")}
-                  className="w-full h-full rounded bg-white shadow"
+                  className="w-full h-full border-3 border-foreground bg-white"
                   sandbox="allow-scripts"
                   title="Email Preview"
                 />
@@ -150,8 +150,8 @@ export function TemplateForm({ template }: TemplateFormProps) {
           placeholder={`<html>\n<body style="font-family:sans-serif;">\n  <header><!-- logo, brand --></header>\n  <main>{{content}}</main>\n  <footer><!-- unsubscribe footer --></footer>\n</body>\n</html>`}
           required
         />
-        <p className="text-xs text-slate-500">
-          Tulis HTML layout. Gunakan <code className="bg-slate-100 px-1 rounded">{"{{content}}"}</code> sebagai placeholder — konten campaign akan diinjeksikan di sana saat pengiriman.
+        <p className="text-xs text-muted-foreground font-semibold">
+          Tulis HTML layout. Gunakan <code className="bg-muted border border-foreground/20 px-1 font-mono">{"{{content}}"}</code> sebagai placeholder — konten campaign akan diinjeksikan di sana saat pengiriman.
           Merge tags lain: {"{{first_name}}"}, {"{{full_name}}"}, {"{{email}}"}, {"{{unsubscribe_url}}"}.
         </p>
       </div>

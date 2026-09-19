@@ -4,6 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface PendingInvite {
@@ -49,7 +56,7 @@ export function InviteMemberForm({
 
   return (
     <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-700">Undang Anggota Baru</h4>
+      <h4 className="text-sm font-black uppercase tracking-wide">Undang Anggota Baru</h4>
       <form onSubmit={handleInvite} className="flex gap-2 items-end">
         <div className="flex-1 space-y-1">
           <Label htmlFor="inviteEmail">Email</Label>
@@ -64,14 +71,15 @@ export function InviteMemberForm({
         </div>
         <div className="space-y-1">
           <Label>Role</Label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="h-8 rounded-lg border border-input bg-transparent px-2 text-sm"
-          >
-            <option value="member">Member</option>
-            <option value="admin">Admin</option>
-          </select>
+          <Select value={role} onValueChange={(v) => setRole(v ?? role)}>
+            <SelectTrigger size="sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="member">Member</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Button type="submit" disabled={loading}>
           {loading ? "Mengirim..." : "Undang"}
@@ -80,13 +88,13 @@ export function InviteMemberForm({
 
       {pendingInvites.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-slate-500 mb-2">Undangan Tertunda</p>
-          <div className="divide-y border rounded-lg">
+          <p className="text-xs font-black uppercase tracking-wide text-muted-foreground mb-2">Undangan Tertunda</p>
+          <div className="border-3 border-foreground">
             {pendingInvites.map((inv) => (
-              <div key={inv.id} className="flex items-center justify-between px-3 py-2">
+              <div key={inv.id} className="flex items-center justify-between px-3 py-2 border-b-2 border-dashed border-foreground/20 last:border-b-0">
                 <div>
-                  <p className="text-sm">{inv.email}</p>
-                  <p className="text-xs text-slate-400 capitalize">{inv.role}</p>
+                  <p className="text-sm font-bold">{inv.email}</p>
+                  <p className="text-xs text-muted-foreground capitalize font-semibold">{inv.role}</p>
                 </div>
                 <button
                   type="button"
@@ -96,7 +104,7 @@ export function InviteMemberForm({
                     );
                     toast.success("Link undangan disalin");
                   }}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-xs font-bold underline decoration-2"
                 >
                   Salin link
                 </button>

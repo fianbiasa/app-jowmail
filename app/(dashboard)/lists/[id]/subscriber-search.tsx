@@ -29,7 +29,7 @@ export function SubscriberSearch({ defaultValue }: { defaultValue?: string }) {
 
   return (
     <div className="relative">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+      <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
       <Input
         defaultValue={defaultValue}
         onChange={handleChange}

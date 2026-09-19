@@ -18,23 +18,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft, Link2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Link2, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { CopySubscribeLink } from "./copy-subscribe-link";
 import { AddSubscriberForm } from "./add-subscriber-form";
 import { ImportCsvForm } from "./import-csv-form";
 import { SubscriberRowActions } from "../../subscribers/subscriber-row-actions";
 import { SubscriberSearch } from "./subscriber-search";
 import { Suspense } from "react";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 
 const PAGE_SIZE = 50;
 
-function getStatusColor(status: string) {
+function getStatusVariant(status: string): VariantProps<typeof badgeVariants>["variant"] {
   switch (status) {
-    case "subscribed":   return "bg-green-100 text-green-700";
-    case "unsubscribed": return "bg-yellow-100 text-yellow-700";
-    case "bounced":      return "bg-red-100 text-red-700";
-    case "complained":   return "bg-orange-100 text-orange-700";
-    default:             return "bg-slate-100 text-slate-700";
+    case "subscribed":   return "lime";
+    case "unsubscribed": return "yellow";
+    case "bounced":      return "red";
+    case "complained":   return "orange";
+    default:             return "neutral";
   }
 }
 
@@ -99,26 +101,24 @@ export default async function ListDetailPage({
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{list.name}</h1>
-          <p className="text-slate-600">
+          <h1 className="text-2xl">{list.name}</h1>
+          <p className="text-muted-foreground">
             {list.description || "Tidak ada deskripsi"} · {totalAll.toLocaleString("id-ID")} subscriber
           </p>
         </div>
       </div>
 
       {/* Subscribe form link */}
-      <Card className="border-indigo-100 bg-indigo-50/50">
-        <CardContent className="pt-4 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-100 rounded-lg p-2">
-              <Link2 className="h-4 w-4 text-indigo-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-800">Link Form Subscribe Publik</p>
-              <p className="text-xs text-slate-500 mt-0.5">Bagikan link ini agar orang bisa subscribe langsung ke list ini.</p>
-            </div>
-            <CopySubscribeLink listId={list.id} />
+      <Card className="bg-cyan/20">
+        <CardContent className="flex items-center gap-3">
+          <div className="bg-cyan flex size-9 items-center justify-center border-3 border-foreground shrink-0">
+            <Link2 className="h-4 w-4" />
           </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold">Link Form Subscribe Publik</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-semibold">Bagikan link ini agar orang bisa subscribe langsung ke list ini.</p>
+          </div>
+          <CopySubscribeLink listId={list.id} />
         </CardContent>
       </Card>
 
@@ -152,14 +152,23 @@ export default async function ListDetailPage({
             <div>
               <CardTitle>Daftar Subscriber</CardTitle>
               {search && (
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-muted-foreground font-bold mt-1">
                   {total.toLocaleString("id-ID")} hasil untuk &quot;{search}&quot;
                 </p>
               )}
             </div>
-            <Suspense>
-              <SubscriberSearch defaultValue={search} />
-            </Suspense>
+            <div className="flex items-center gap-2">
+              <Suspense>
+                <SubscriberSearch defaultValue={search} />
+              </Suspense>
+              <a
+                href={`/api/subscribers/export?listId=${list.id}${search ? `&q=${encodeURIComponent(search)}` : ""}`}
+                className={buttonVariants({ variant: "outline", size: "sm" }) + " gap-2 shrink-0"}
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </a>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -176,19 +185,17 @@ export default async function ListDetailPage({
             <TableBody>
               {subscribers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-slate-500 py-10">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
                     {search ? "Tidak ada subscriber yang cocok." : "Belum ada subscriber di list ini."}
                   </TableCell>
                 </TableRow>
               ) : (
                 subscribers.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell className="font-medium pl-6">{s.email}</TableCell>
+                    <TableCell className="font-bold pl-6">{s.email}</TableCell>
                     <TableCell>{[s.firstName, s.lastName].filter(Boolean).join(" ") || "—"}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${getStatusColor(s.status)}`}>
-                        {s.status}
-                      </span>
+                      <Badge variant={getStatusVariant(s.status)}>{s.status}</Badge>
                     </TableCell>
                     <TableCell>{new Date(s.createdAt).toLocaleDateString("id-ID")}</TableCell>
                     <TableCell className="pr-6">
@@ -208,8 +215,8 @@ export default async function ListDetailPage({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t bg-slate-50/50">
-              <p className="text-sm text-slate-500">
+            <div className="flex items-center justify-between px-6 py-4 border-t-4 border-foreground bg-muted">
+              <p className="text-sm font-bold text-muted-foreground">
                 Menampilkan {skip + 1}–{Math.min(skip + PAGE_SIZE, total)} dari {total.toLocaleString("id-ID")}
               </p>
               <div className="flex items-center gap-2">
@@ -221,7 +228,7 @@ export default async function ListDetailPage({
                   <ChevronLeft className="h-4 w-4" />
                   Prev
                 </Link>
-                <span className="text-sm text-slate-600 px-1">
+                <span className="text-sm font-bold px-1">
                   {page} / {totalPages}
                 </span>
                 <Link

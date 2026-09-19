@@ -22,6 +22,8 @@ interface PostalWebhookPayload {
     original_message?: PostalMessage; // present in MessageBounced
     bounce?: { id: number; subject?: string; to?: string };
     details?: string;
+    status?: string;   // "HardFail" | "SoftFail" in MessageDeliveryFailed
+    output?: string;   // SMTP response output
     url?: string;
     ip_address?: string;
     user_agent?: string;
@@ -136,11 +138,35 @@ async function processWebhookEvent(body: PostalWebhookPayload) {
           bounceReason: payload.bounce?.subject || payload.details || "Hard bounce",
         },
       });
-      // Mark subscriber as bounced
       await prisma.subscriber.update({
         where: { id: log.subscriberId },
         data: { status: "bounced" },
       });
+      break;
+
+    case "MessageDeliveryFailed":
+      if (payload.status === "HardFail") {
+        // Hard fail = permanent bounce (address doesn't exist, etc.)
+        await prisma.campaignLog.update({
+          where: { id: log.id },
+          data: {
+            status: "bounced",
+            bounceReason: payload.output
+              ? String(payload.output).split("\n")[0]
+              : payload.details || "Hard delivery failure",
+          },
+        });
+        await prisma.subscriber.update({
+          where: { id: log.subscriberId },
+          data: { status: "bounced" },
+        });
+      } else {
+        // Soft fail = temporary, just mark as failed
+        await prisma.campaignLog.update({
+          where: { id: log.id },
+          data: { status: "failed" },
+        });
+      }
       break;
 
     case "MessageComplained":

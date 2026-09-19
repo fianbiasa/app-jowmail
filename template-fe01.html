@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAILPOP! — Email Marketing</title>
+<style>
+:root{
+  --bg:#FFFDF5;
+  --ink:#111111;
+  --yellow:#FFE500;
+  --pink:#FF6EC7;
+  --cyan:#4DE1FF;
+  --lime:#A6FF4D;
+  --orange:#FF8A00;
+  --purple:#B26BFF;
+  --red:#FF4D4D;
+  --card:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial Black','Segoe UI',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--ink);min-height:100vh;}
+
+/* ============ NAVBAR ============ */
+nav{
+  display:flex;align-items:center;gap:14px;
+  background:var(--yellow);
+  border-bottom:4px solid var(--ink);
+  padding:14px 28px;position:sticky;top:0;z-index:50;
+}
+.logo{
+  font-size:24px;font-weight:900;letter-spacing:-1px;
+  background:var(--ink);color:var(--yellow);
+  padding:8px 16px;transform:rotate(-2deg);
+  box-shadow:5px 5px 0 var(--pink);
+}
+nav .links{display:flex;gap:6px;margin-left:18px;flex-wrap:wrap;}
+nav .links a{
+  text-decoration:none;color:var(--ink);font-size:13px;font-weight:900;
+  padding:8px 14px;border:3px solid transparent;
+}
+nav .links a:hover,nav .links a.on{border:3px solid var(--ink);background:#fff;box-shadow:4px 4px 0 var(--ink);}
+nav .right{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.btn{
+  border:3px solid var(--ink);background:var(--pink);color:var(--ink);
+  font-weight:900;font-size:13px;padding:10px 18px;cursor:pointer;
+  box-shadow:5px 5px 0 var(--ink);transition:.1s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink);}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink);}
+.btn.alt{background:var(--cyan);}
+.bell{
+  width:42px;height:42px;border:3px solid var(--ink);background:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);position:relative;
+}
+.bell::after{content:'3';position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;
+  font-size:11px;width:20px;height:20px;border:2px solid var(--ink);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;}
+
+main{padding:32px clamp(16px,4vw,52px);max-width:1400px;margin:0 auto;}
+
+/* ============ HERO BANNER ============ */
+.hero{
+  background:var(--purple);border:4px solid var(--ink);
+  box-shadow:8px 8px 0 var(--ink);
+  padding:34px 36px;color:#fff;display:flex;align-items:center;gap:30px;
+  flex-wrap:wrap;margin-bottom:30px;position:relative;overflow:hidden;
+}
+.hero h1{font-size:clamp(26px,4vw,42px);letter-spacing:-1px;line-height:1.05;text-shadow:4px 4px 0 var(--ink);}
+.hero p{font-family:'Segoe UI',sans-serif;font-size:14.5px;margin-top:10px;max-width:520px;color:#F3E8FF;}
+.hero .btns{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;}
+.hero .btns .btn{background:var(--lime);}
+.hero .btns .btn.ghost{background:#fff;}
+.hero .big-emoji{font-size:110px;margin-left:auto;transform:rotate(8deg);filter:drop-shadow(6px 6px 0 rgba(0,0,0,.4));}
+.hero .deco{position:absolute;font-size:20px;opacity:.9;}
+.d1{top:14px;right:180px;transform:rotate(-15deg);}
+.d2{bottom:16px;left:46%;transform:rotate(20deg);}
+.d3{top:50%;right:60px;transform:rotate(-30deg);}
+
+/* ============ STAT GRID ============ */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-bottom:34px;}
+.stat{
+  border:4px solid var(--ink);background:var(--card);padding:20px;
+  box-shadow:8px 8px 0 var(--ink);transition:.12s;
+}
+.stat:hover{transform:translate(-3px,-3px);box-shadow:11px 11px 0 var(--ink);}
+.stat .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.stat .name{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}
+.stat .emoji{width:44px;height:44px;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.stat .num{font-size:36px;font-weight:900;letter-spacing:-2px;}
+.stat .trend{font-family:'Segoe UI',sans-serif;font-size:12.5px;font-weight:700;margin-top:8px;
+  display:inline-block;border:2px solid var(--ink);padding:3px 10px;background:#fff;}
+.stat.yellow .emoji{background:var(--yellow);}
+.stat.pink .emoji{background:var(--pink);}
+.stat.cyan .emoji{background:var(--cyan);}
+.stat.lime .emoji{background:var(--lime);}
+
+/* ============ SECTION TITLE ============ */
+.sec-title{display:flex;align-items:center;gap:14px;margin:0 0 20px;}
+.sec-title h2{font-size:20px;font-weight:900;letter-spacing:-0.5px;}
+.sec-title .line{flex:1;height:4px;background:var(--ink);}
+.sec-title .chip{background:var(--cyan);border:3px solid var(--ink);font-size:12px;font-weight:900;padding:4px 12px;}
+
+/* ============ CAMPAIGN BOARD ============ */
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px;margin-bottom:36px;}
+.col{border:4px solid var(--ink);background:#fff;min-height:200px;}
+.col-head{
+  border-bottom:4px solid var(--ink);padding:12px 16px;font-weight:900;font-size:14px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.col-head .cnt{border:2px solid var(--ink);background:#fff;font-size:12px;padding:1px 9px;}
+.col-body{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.col-head.h1{background:var(--pink);}
+.col-head.h2{background:var(--yellow);}
+.col-head.h3{background:var(--cyan);}
+.col-head.h4{background:var(--lime);}
+.task{
+  border:3px solid var(--ink);background:#fff;padding:14px;
+  box-shadow:5px 5px 0 var(--ink);cursor:grab;transition:.1s;
+}
+.task:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink);}
+.task b{font-size:13.5px;display:block;margin-bottom:8px;line-height:1.3;}
+.task .meta{display:flex;gap:8px;flex-wrap:wrap;}
+.task .m{font-family:'Segoe UI',sans-serif;font-size:11px;font-weight:700;border:2px solid var(--ink);padding:2px 8px;}
+.task .bar{height:10px;border:2px solid var(--ink);margin-top:12px;background:#fff;}
+.task .bar i{display:block;height:100%;}
+
+/* ============ HEATMAP ============ */
+.heatmap{
+  border:4px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ink);
+  padding:24px;margin-bottom:36px;
+}
+.hm-grid{display:grid;grid-template-columns:56px repeat(12,1fr);gap:5px;font-family:'Segoe UI',sans-serif;}
+.hm-grid .lbl{font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#555;}
+.hm-grid .rowlbl{font-size:11px;font-weight:700;display:flex;align-items:center;}
+.cell{aspect-ratio:1;border:2px solid var(--ink);min-width:0;}
+.hm-legend{display:flex;gap:8px;align-items:center;margin-top:16px;font-family:'Segoe UI',sans-serif;font-size:12px;font-weight:700;}
+.hm-legend .sw{width:18px;height:18px;border:2px solid var(--ink);}
+
+/* ============ BOTTOM ROW ============ */
+.bottom{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;}
+@media(max-width:900px){.bottom{grid-template-columns:1fr;}.hero .big-emoji{display:none;}}
+.panel{border:4px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ink);padding:22px;}
+.panel h3{font-size:15px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.tbl{width:100%;border-collapse:collapse;font-family:'Segoe UI',sans-serif;font-size:13px;}
+.tbl th{background:var(--ink);color:var(--yellow);text-align:left;padding:9px 12px;font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+.tbl td{border:2px solid var(--ink);padding:9px 12px;font-weight:600;}
+.tbl tr td:first-child{font-weight:800;}
+.st{font-size:11px;font-weight:900;border:2px solid var(--ink);padding:2px 9px;display:inline-block;}
+.st.w{background:var(--lime);}
+.st.l{background:var(--yellow);}
+.st.lost{background:var(--red);color:#fff;}
+
+/* top contacts */
+.contact{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:3px dashed #DDD;}
+.contact:last-child{border-bottom:none;}
+.contact .av{width:40px;height:40px;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;}
+.contact b{font-size:13px;display:block;}
+.contact span{font-family:'Segoe UI',sans-serif;font-size:11.5px;color:#666;}
+.contact .score{margin-left:auto;font-weight:900;font-size:13px;border:2px solid var(--ink);padding:3px 9px;background:var(--cyan);}
+
+footer{
+  border-top:4px solid var(--ink);background:var(--ink);color:var(--yellow);
+  text-align:center;padding:18px;font-size:13px;font-weight:900;letter-spacing:1px;margin-top:10px;
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<nav>
+  <div class="logo">MAILPOP! 📮</div>
+  <div class="links">
+    <a href="#" class="on">DASHBOARD</a>
+    <a href="#">CAMPAIGN</a>
+    <a href="#">KONTAK</a>
+    <a href="#">TEMPLATE</a>
+    <a href="#">AUTOMASI</a>
+    <a href="#">LAPORAN</a>
+  </div>
+  <div class="right">
+    <button class="btn alt">＋ BUAT EMAIL</button>
+    <div class="bell">🔔</div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="deco d1">✦</span><span class="deco d2">✦</span><span class="deco d3">★</span>
+    <div>
+      <h1>EMAIL MARKETING<br>YANG LARI KENCANG! 🏃💨</h1>
+      <p>Halo Andra! Campaign "Flash Sale Akhir Bulan" sedang berjalan dan performanya meledak. Open rate naik 23% minggu ini!</p>
+      <div class="btns">
+        <button class="btn">🚀 LANJUTKAN DRAFT</button>
+        <button class="btn ghost">📊 LIHAT ANALITIK</button>
+      </div>
+    </div>
+    <div class="big-emoji">📬</div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat yellow">
+      <div class="top"><span class="name">Subscribers</span><div class="emoji">👥</div></div>
+      <div class="num">48.254</div>
+      <span class="trend">▲ +1.203 minggu ini</span>
+    </div>
+    <div class="stat pink">
+      <div class="top"><span class="name">Open Rate</span><div class="emoji">✉️</div></div>
+      <div class="num">38,7%</div>
+      <span class="trend">▲ +3,1%</span>
+    </div>
+    <div class="stat cyan">
+      <div class="top"><span class="name">Click Rate</span><div class="emoji">🖱️</div></div>
+      <div class="num">12,9%</div>
+      <span class="trend">▲ +1,8%</span>
+    </div>
+    <div class="stat lime">
+      <div class="top"><span class="name">Unsubscribe</span><div class="emoji">👋</div></div>
+      <div class="num">0,4%</div>
+      <span class="trend">▼ -0,2% (bagus!)</span>
+    </div>
+  </section>
+
+  <!-- KANBAN BOARD -->
+  <div class="sec-title"><h2>📌 PAPAN CAMPAIGN</h2><span class="line"></span><span class="chip">DRAG & DROP (SOON)</span></div>
+  <section class="board">
+    <div class="col">
+      <div class="col-head h2">💡 IDE / DRAFT <span class="cnt">2</span></div>
+      <div class="col-body">
+        <div class="task">
+          <b>🎂 Promo Ulang Tahun Pelanggan</b>
+          <div class="meta"><span class="m" style="background:#FFE500">Segmentasi</span><span class="m" style="background:#fff">Andra</span></div>
+        </div>
+        <div class="task">
+          <b>🛒 Cart Abandonment Reminder</b>
+          <div class="meta"><span class="m" style="background:#FFE500">Copywriting</span><span class="m" style="background:#fff">Tim</span></div>
+          <div class="bar"><i style="width:35%;background:var(--pink)"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-head h1">🎨 DESAIN <span class="cnt">1</span></div>
+      <div class="col-body">
+        <div class="task">
+          <b>📰 Newsletter #24: Tips Marketing</b>
+          <div class="meta"><span class="m" style="background:#FF6EC7">Review</span><span class="m" style="background:#fff">Desain</span></div>
+          <div class="bar"><i style="width:70%;background:var(--purple)"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-head h3">⏳ TERJADWAL <span class="cnt">2</span></div>
+      <div class="col-body">
+        <div class="task">
+          <b>🎁 Welcome Series — Batch 2</b>
+          <div class="meta"><span class="m" style="background:#4DE1FF">Jum, 20 Sep · 09:00</span></div>
+          <div class="bar"><i style="width:100%;background:var(--cyan)"></i></div>
+        </div>
+        <div class="task">
+          <b>⚡ Flash Sale Teaser</b>
+          <div class="meta"><span class="m" style="background:#4DE1FF">Sab, 21 Sep · 07:00</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-head h4">✅ TERKIRIM <span class="cnt">2</span></div>
+      <div class="col-body">
+        <div class="task">
+          <b>🛍️ Flash Sale Akhir Bulan</b>
+          <div class="meta"><span class="m" style="background:#A6FF4D">OR 41,2%</span><span class="m" style="background:#fff">CTR 15,3%</span></div>
+          <div class="bar"><i style="width:86%;background:var(--lime)"></i></div>
+        </div>
+        <div class="task">
+          <b>📢 Pengumuman Fitur Baru</b>
+          <div class="meta"><span class="m" style="background:#A6FF4D">OR 33,8%</span><span class="m" style="background:#fff">CTR 9,1%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HEATMAP -->
+  <div class="sec-title"><h2>🔥 HEATMAP JAM TERBAIK KIRIM EMAIL</h2><span class="line"></span><span class="chip">BERDASARKAN OPEN RATE</span></div>
+  <section class="heatmap">
+    <div class="hm-grid" id="hm"></div>
+    <div class="hm-legend">
+      SEPI <span class="sw" style="background:#fff"></span><span class="sw" style="background:#FFF9B0"></span>
+      <span class="sw" style="background:#FFE500"></span><span class="sw" style="background:#FF8A00"></span>
+      <span class="sw" style="background:#FF4D4D"></span> RAMAI 🔥
+      <span style="margin-left:auto">💡 Rekomendasi: <b>Selasa 10:00 & Kamis 19:00</b></span>
+    </div>
+  </section>
+
+  <!-- BOTTOM -->
+  <div class="sec-title"><h2>📊 PERFORMA & KONTAK TERATAS</h2><span class="line"></span></div>
+  <section class="bottom">
+    <div class="panel">
+      <h3>🏆 CAMPAIGN TERATAS BULAN INI</h3>
+      <table class="tbl">
+        <thead><tr><th>Campaign</th><th>Terkirim</th><th>Open</th><th>CTR</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>🛍️ Flash Sale Akhir Bulan</td><td>42.180</td><td>41,2%</td><td>15,3%</td><td><span class="st w">JUARA</span></td></tr>
+          <tr><td>🎁 Welcome Series B2</td><td>8.420</td><td>52,6%</td><td>21,8%</td><td><span class="st w">JUARA</span></td></tr>
+          <tr><td>📢 Fitur Baru v2.0</td><td>15.730</td><td>33,8%</td><td>9,1%</td><td><span class="st l">LUMAYAN</span></td></tr>
+          <tr><td>⚠️ Promo Stok Lama</td><td>12.300</td><td>18,4%</td><td>4,1%</td><td><span class="st lost">BURUK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>⭐ KONTAK PALING ENGAGED</h3>
+      <div class="contact"><div class="av" style="background:var(--yellow)">RS</div><div><b>Rina Susanti</b><span>32 email dibuka · 12 klik</span></div><span class="score">98</span></div>
+      <div class="contact"><div class="av" style="background:var(--pink)">BP</div><div><b>Budi Prasetyo</b><span>28 email dibuka · 9 klik</span></div><span class="score">91</span></div>
+      <div class="contact"><div class="av" style="background:var(--cyan)">DA</div><div><b>Dewi Anggraini</b><span>25 email dibuka · 11 klik</span></div><span class="score">89</span></div>
+      <div class="contact"><div class="av" style="background:var(--lime)">FH</div><div><b>Fajar Hidayat</b><span>21 email dibuka · 6 klik</span></div><span class="score">84</span></div>
+      <div class="contact"><div class="av" style="background:var(--purple)">SW</div><div><b>Sari Wulandari</b><span>19 email dibuka · 7 klik</span></div><span class="score">80</span></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>MAILPOP! © 2026 — KIRIM EMAIL, BIKIN POP 💥</footer>
+
+<script>
+// Generate heatmap: 5 days x 12 time slots, weighted random
+const hm = document.getElementById('hm');
+const days = ['Sen','Sel','Rab','Kam','Jum'];
+const hours = ['6a','7a','8a','9a','10a','11a','12p','2p','4p','6p','7p','8p'];
+// pre-defined intensity pattern (0-4) favoring Tue/Thu mornings & evenings
+const pattern = [
+  [0,0,1,2,3,2,1,1,0,1,2,1],   // Sen
+  [0,1,2,3,4,3,2,2,1,2,3,2],   // Sel
+  [0,0,1,2,3,2,1,1,1,1,2,2],   // Rab
+  [0,1,2,3,4,3,2,2,2,3,4,3],   // Kam
+  [1,1,2,3,3,2,2,1,0,0,1,0],   // Jum
+];
+const colors = ['#ffffff','#FFF9B0','#FFE500','#FF8A00','#FF4D4D'];
+let grid = '<div class="rowlbl"></div>';
+hours.forEach(h=> grid += `<div class="lbl">${h}</div>`);
+days.forEach((d,r)=>{
+  grid += `<div class="rowlbl">${d}</div>`;
+  for(let c=0;c<12;c++){
+    grid += `<div class="cell" title="${d} ${hours[c]} — level ${pattern[r][c]}" style="background:${colors[pattern[r][c]]}"></div>`;
+  }
+});
+hm.innerHTML = grid;
+</script>
+</body>
+</html>

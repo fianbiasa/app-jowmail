@@ -68,22 +68,22 @@ export function OrgEditDialog({ org }: { org: OrgData }) {
       </DialogTrigger>
       <DialogContent className="max-w-md space-y-5">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">Edit Plan — {org.name}</DialogTitle>
+          <DialogTitle>Edit Plan — {org.name}</DialogTitle>
         </DialogHeader>
 
           {/* Plan presets */}
           <div className="space-y-2">
-            <Label className="text-xs text-slate-500 uppercase tracking-wide">Preset Plan</Label>
+            <Label>Preset Plan</Label>
             <div className="flex gap-2 flex-wrap">
               {(Object.keys(PLANS) as PlanKey[]).map((key) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => applyPreset(key)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold border transition-colors capitalize ${
+                  className={`border-2 border-foreground px-3 py-1 text-xs font-black uppercase tracking-wide transition-[transform,box-shadow] duration-100 capitalize ${
                     plan === key
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "border-slate-200 text-slate-600 hover:border-indigo-400"
+                      ? "bg-foreground text-background"
+                      : "bg-card hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-xs"
                   }`}
                 >
                   {PLANS[key].label}
@@ -94,8 +94,8 @@ export function OrgEditDialog({ org }: { org: OrgData }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="quotaSub" className="text-sm">
-                Quota Subscriber <span className="text-slate-400">(-1 = unlimited)</span>
+              <Label htmlFor="quotaSub" className="normal-case text-sm">
+                Quota Subscriber <span className="text-muted-foreground normal-case">(-1 = unlimited)</span>
               </Label>
               <Input
                 id="quotaSub"
@@ -106,8 +106,8 @@ export function OrgEditDialog({ org }: { org: OrgData }) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="quotaEmail" className="text-sm">
-                Quota Email/Bulan <span className="text-slate-400">(-1 = unlimited)</span>
+              <Label htmlFor="quotaEmail" className="normal-case text-sm">
+                Quota Email/Bulan <span className="text-muted-foreground normal-case">(-1 = unlimited)</span>
               </Label>
               <Input
                 id="quotaEmail"

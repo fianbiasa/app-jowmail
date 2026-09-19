@@ -48,12 +48,12 @@ export function SubscribeForm({ listId }: { listId: string }) {
     return (
       <div className="text-center py-4 space-y-3">
         <div className="flex justify-center">
-          <div className="bg-green-100 rounded-full p-4">
-            <CheckCircle className="h-10 w-10 text-green-500" />
+          <div className="bg-lime flex size-16 items-center justify-center border-3 border-foreground">
+            <CheckCircle className="h-8 w-8" />
           </div>
         </div>
-        <h2 className="text-xl font-bold text-slate-800">Terima kasih!</h2>
-        <p className="text-slate-500 text-sm">
+        <h2 className="text-xl">Terima kasih!</h2>
+        <p className="text-muted-foreground text-sm font-semibold">
           Anda berhasil berlangganan. Kami akan segera mengirim email terbaru untuk Anda.
         </p>
       </div>
@@ -64,12 +64,12 @@ export function SubscribeForm({ listId }: { listId: string }) {
     return (
       <div className="text-center py-4 space-y-3">
         <div className="flex justify-center">
-          <div className="bg-blue-100 rounded-full p-4">
-            <Mail className="h-10 w-10 text-blue-500" />
+          <div className="bg-cyan flex size-16 items-center justify-center border-3 border-foreground">
+            <Mail className="h-8 w-8" />
           </div>
         </div>
-        <h2 className="text-xl font-bold text-slate-800">Sudah terdaftar!</h2>
-        <p className="text-slate-500 text-sm">
+        <h2 className="text-xl">Sudah terdaftar!</h2>
+        <p className="text-muted-foreground text-sm font-semibold">
           Email Anda sudah ada di daftar ini. Kami akan terus mengirimkan konten terbaru.
         </p>
       </div>
@@ -90,7 +90,7 @@ export function SubscribeForm({ listId }: { listId: string }) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-sm">Alamat Email <span className="text-red-500">*</span></Label>
+        <Label htmlFor="email" className="text-sm">Alamat Email <span className="text-red">*</span></Label>
         <Input
           id="email"
           name="email"
@@ -101,7 +101,7 @@ export function SubscribeForm({ listId }: { listId: string }) {
       </div>
 
       {state === "error" && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+        <p className="text-sm font-bold text-white bg-red border-2 border-foreground px-3 py-2">{error}</p>
       )}
 
       <Button type="submit" className="w-full" disabled={state === "loading"}>

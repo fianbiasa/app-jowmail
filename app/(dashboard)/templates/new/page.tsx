@@ -19,8 +19,8 @@ export default async function NewTemplatePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Template Baru</h1>
-        <p className="text-slate-600">Buat template email baru.</p>
+        <h1 className="text-2xl">Template Baru</h1>
+        <p className="text-muted-foreground">Buat template email baru.</p>
       </div>
 
       <Card>

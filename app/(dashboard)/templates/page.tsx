@@ -35,8 +35,8 @@ export default async function TemplatesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Templates</h1>
-          <p className="text-slate-600">
+          <h1 className="text-2xl">Templates</h1>
+          <p className="text-muted-foreground">
             Kelola template email untuk campaign.
           </p>
         </div>
@@ -62,14 +62,14 @@ export default async function TemplatesPage() {
             <TableBody>
               {templates.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-slate-500">
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
                     Belum ada template. Buat template pertama.
                   </TableCell>
                 </TableRow>
               ) : (
                 templates.map((template) => (
                   <TableRow key={template.id}>
-                    <TableCell className="font-medium">{template.name}</TableCell>
+                    <TableCell className="font-bold">{template.name}</TableCell>
                     <TableCell>{template.subject}</TableCell>
                     <TableCell>
                       {new Date(template.createdAt).toLocaleDateString("id-ID")}

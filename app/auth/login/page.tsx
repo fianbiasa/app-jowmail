@@ -46,11 +46,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">JowMail</CardTitle>
-          <CardDescription>
+          <CardDescription className="font-semibold">
             Masuk ke dashboard email marketing platform.
           </CardDescription>
         </CardHeader>
@@ -80,9 +80,9 @@ export default function LoginPage() {
               {isLoading ? "Memuat..." : "Masuk"}
             </Button>
           </form>
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-4 text-center text-sm font-semibold text-muted-foreground">
             Belum punya akun?{" "}
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
+            <Link href="/auth/register" className="font-black text-foreground underline decoration-2">
               Daftar sekarang
             </Link>
           </p>

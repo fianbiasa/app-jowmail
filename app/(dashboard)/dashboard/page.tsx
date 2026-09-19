@@ -4,6 +4,8 @@ import { getCurrentOrganization } from "@/lib/organization";
 import { prisma } from "@/lib/prisma";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 import {
   Mail, Users, LayoutList, FileText,
   Send, MousePointerClick, Eye, TrendingUp, Plus, ArrowRight,
@@ -68,13 +70,13 @@ export default async function DashboardPage() {
     Diklik: Number(r.clicked),
   }));
 
-  const statusConfig: Record<string, { label: string; cls: string }> = {
-    draft:     { label: "Draft",     cls: "bg-slate-100 text-slate-600" },
-    scheduled: { label: "Scheduled", cls: "bg-blue-100 text-blue-700" },
-    queued:    { label: "Queued",    cls: "bg-yellow-100 text-yellow-700" },
-    sending:   { label: "Sending",   cls: "bg-indigo-100 text-indigo-700" },
-    sent:      { label: "Sent",      cls: "bg-green-100 text-green-700" },
-    failed:    { label: "Failed",    cls: "bg-red-100 text-red-700" },
+  const statusConfig: Record<string, { label: string; variant: VariantProps<typeof badgeVariants>["variant"] }> = {
+    draft:     { label: "Draft",     variant: "neutral" },
+    scheduled: { label: "Scheduled", variant: "cyan" },
+    queued:    { label: "Queued",    variant: "yellow" },
+    sending:   { label: "Sending",   variant: "purple" },
+    sent:      { label: "Sent",      variant: "lime" },
+    failed:    { label: "Failed",    variant: "red" },
   };
 
   return (
@@ -82,9 +84,9 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Selamat datang kembali, <span className="font-medium">{organization.name}</span>
+          <h1 className="text-2xl">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Selamat datang kembali, <span className="font-bold">{organization.name}</span>
           </p>
         </div>
         <Link href="/campaigns/new" className={buttonVariants({ size: "sm" }) + " gap-1.5"}>
@@ -94,24 +96,22 @@ export default async function DashboardPage() {
       </div>
 
       {/* Resource counts */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Campaigns", value: campaigns, icon: Mail, href: "/campaigns", color: "text-indigo-600", bg: "bg-indigo-50" },
-          { label: "Subscribers", value: subscribers.toLocaleString(), icon: Users, href: "/subscribers", color: "text-emerald-600", bg: "bg-emerald-50" },
-          { label: "Lists", value: lists, icon: LayoutList, href: "/lists", color: "text-sky-600", bg: "bg-sky-50" },
-          { label: "Templates", value: templates, icon: FileText, href: "/templates", color: "text-violet-600", bg: "bg-violet-50" },
+          { label: "Campaigns", value: campaigns, icon: Mail, href: "/campaigns", bg: "bg-yellow" },
+          { label: "Subscribers", value: subscribers.toLocaleString(), icon: Users, href: "/subscribers", bg: "bg-pink" },
+          { label: "Lists", value: lists, icon: LayoutList, href: "/lists", bg: "bg-cyan" },
+          { label: "Templates", value: templates, icon: FileText, href: "/templates", bg: "bg-lime" },
         ].map((item) => (
-          <Link key={item.label} href={item.href} className="block group">
-            <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="pt-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{item.label}</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{item.value}</p>
-                  </div>
-                  <div className={`${item.bg} ${item.color} rounded-xl p-2.5`}>
-                    <item.icon className="h-5 w-5" />
-                  </div>
+          <Link key={item.label} href={item.href} className="block">
+            <Card>
+              <CardContent className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">{item.label}</p>
+                  <p className="text-3xl font-black tracking-tight mt-1">{item.value}</p>
+                </div>
+                <div className={`${item.bg} flex size-11 items-center justify-center border-3 border-foreground`}>
+                  <item.icon className="h-5 w-5" />
                 </div>
               </CardContent>
             </Card>
@@ -120,37 +120,37 @@ export default async function DashboardPage() {
       </div>
 
       {/* Email performance */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="border-0 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow">
-          <CardContent className="pt-5">
-            <div className="flex items-center gap-2 opacity-80">
+      <div className="grid gap-5 sm:grid-cols-3">
+        <Card className="bg-purple text-white">
+          <CardContent>
+            <div className="flex items-center gap-2">
               <Send className="h-4 w-4" />
-              <span className="text-sm font-medium">Total Terkirim</span>
+              <span className="text-sm font-bold uppercase tracking-wide">Total Terkirim</span>
             </div>
-            <p className="text-4xl font-bold mt-2">{totalSent.toLocaleString()}</p>
-            <p className="text-xs opacity-70 mt-1">semua campaign</p>
+            <p className="text-4xl font-black mt-2">{totalSent.toLocaleString()}</p>
+            <p className="text-xs mt-1 font-bold">semua campaign</p>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow">
-          <CardContent className="pt-5">
-            <div className="flex items-center gap-2 opacity-80">
+        <Card className="bg-orange text-white">
+          <CardContent>
+            <div className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
-              <span className="text-sm font-medium">Total Dibuka</span>
+              <span className="text-sm font-bold uppercase tracking-wide">Total Dibuka</span>
             </div>
-            <p className="text-4xl font-bold mt-2">{totalOpened.toLocaleString()}</p>
-            <p className="text-xs opacity-70 mt-1 flex items-center gap-1">
+            <p className="text-4xl font-black mt-2">{totalOpened.toLocaleString()}</p>
+            <p className="text-xs mt-1 font-bold flex items-center gap-1">
               <TrendingUp className="h-3 w-3" /> {openRate}% open rate
             </p>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow">
-          <CardContent className="pt-5">
-            <div className="flex items-center gap-2 opacity-80">
+        <Card className="bg-lime text-foreground">
+          <CardContent>
+            <div className="flex items-center gap-2">
               <MousePointerClick className="h-4 w-4" />
-              <span className="text-sm font-medium">Total Diklik</span>
+              <span className="text-sm font-bold uppercase tracking-wide">Total Diklik</span>
             </div>
-            <p className="text-4xl font-bold mt-2">{totalClicked.toLocaleString()}</p>
-            <p className="text-xs opacity-70 mt-1 flex items-center gap-1">
+            <p className="text-4xl font-black mt-2">{totalClicked.toLocaleString()}</p>
+            <p className="text-xs mt-1 font-bold flex items-center gap-1">
               <TrendingUp className="h-3 w-3" /> {clickRate}% click rate
             </p>
           </CardContent>
@@ -159,8 +159,8 @@ export default async function DashboardPage() {
 
       {/* Chart */}
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Aktivitas Email — 30 Hari Terakhir</CardTitle>
+        <CardHeader>
+          <CardTitle>Aktivitas Email — 30 Hari Terakhir</CardTitle>
         </CardHeader>
         <CardContent>
           <OverviewChart data={chartData} />
@@ -169,34 +169,34 @@ export default async function DashboardPage() {
 
       {/* Recent campaigns */}
       <Card>
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold">Campaign Terbaru</CardTitle>
-          <Link href="/campaigns" className="text-sm text-indigo-600 hover:underline flex items-center gap-1">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Campaign Terbaru</CardTitle>
+          <Link href="/campaigns" className="text-sm font-bold uppercase hover:underline flex items-center gap-1">
             Lihat semua <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent>
           {recentCampaigns.length === 0 ? (
-            <div className="text-center py-8 text-slate-400 text-sm">
+            <div className="text-center py-8 text-muted-foreground text-sm">
               Belum ada campaign.{" "}
-              <Link href="/campaigns/new" className="text-indigo-600 hover:underline">Buat sekarang →</Link>
+              <Link href="/campaigns/new" className="font-bold hover:underline">Buat sekarang →</Link>
             </div>
           ) : (
-            <div className="divide-y">
+            <div>
               {recentCampaigns.map((c) => {
-                const s = statusConfig[c.status] ?? { label: c.status, cls: "bg-slate-100 text-slate-600" };
+                const s = statusConfig[c.status] ?? { label: c.status, variant: "neutral" as const };
                 return (
-                  <Link key={c.id} href={`/campaigns/${c.id}`} className="flex items-center justify-between py-3 hover:bg-slate-50 -mx-2 px-2 rounded-lg transition-colors">
+                  <Link key={c.id} href={`/campaigns/${c.id}`} className="flex items-center justify-between py-3 border-b-2 border-dashed border-foreground/20 last:border-b-0 hover:bg-accent/25 -mx-2 px-2 transition-colors">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-800 truncate">{c.name}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-sm font-bold truncate">{c.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                         {" · "}{c._count.logs} penerima
                       </p>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ml-3 shrink-0 ${s.cls}`}>
+                    <Badge variant={s.variant} className="ml-3 shrink-0">
                       {s.label}
-                    </span>
+                    </Badge>
                   </Link>
                 );
               })}

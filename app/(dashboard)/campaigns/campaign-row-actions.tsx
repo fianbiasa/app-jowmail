@@ -58,7 +58,7 @@ export function CampaignRowActions({ campaignId, status }: CampaignRowActionsPro
           size="sm"
           onClick={handleDelete}
           disabled={deleting}
-          className="text-red-600 hover:text-red-700 hover:border-red-300"
+          className="text-red hover:bg-red hover:text-white"
         >
           {deleting ? "..." : "Hapus"}
         </Button>

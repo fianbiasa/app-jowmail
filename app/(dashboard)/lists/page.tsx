@@ -42,8 +42,8 @@ export default async function ListsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Subscriber Lists</h1>
-          <p className="text-slate-600">
+          <h1 className="text-2xl">Subscriber Lists</h1>
+          <p className="text-muted-foreground">
             Kelola list subscriber untuk campaign email.
           </p>
         </div>
@@ -79,14 +79,14 @@ export default async function ListsPage() {
             <TableBody>
               {lists.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-slate-500">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground">
                     Belum ada list. Buat list pertama di atas.
                   </TableCell>
                 </TableRow>
               ) : (
                 lists.map((list) => (
                   <TableRow key={list.id}>
-                    <TableCell className="font-medium">{list.name}</TableCell>
+                    <TableCell className="font-bold">{list.name}</TableCell>
                     <TableCell>{list.description || "-"}</TableCell>
                     <TableCell>{list._count.subscribers}</TableCell>
                     <TableCell>

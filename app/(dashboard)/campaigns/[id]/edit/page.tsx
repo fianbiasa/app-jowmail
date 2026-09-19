@@ -43,8 +43,8 @@ export default async function EditCampaignPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Campaign</h1>
-        <p className="text-slate-600">Perbarui pengaturan campaign.</p>
+        <h1 className="text-2xl">Edit Campaign</h1>
+        <p className="text-muted-foreground">Perbarui pengaturan campaign.</p>
       </div>
 
       <Card>

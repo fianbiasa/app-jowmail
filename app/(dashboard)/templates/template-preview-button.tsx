@@ -38,13 +38,13 @@ export function TemplatePreviewButton({ name, htmlContent }: TemplatePreviewButt
         Preview
       </DialogTrigger>
       <DialogContent className="max-w-3xl h-[85vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b-4 border-foreground">
           <DialogTitle>Preview: {name}</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-hidden bg-slate-100 p-4">
+        <div className="flex-1 overflow-hidden bg-muted p-4">
           <iframe
             srcDoc={previewHtml}
-            className="w-full h-full rounded bg-white shadow"
+            className="w-full h-full border-3 border-foreground bg-white"
             sandbox="allow-scripts"
             title={`Preview ${name}`}
           />

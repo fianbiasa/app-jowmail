@@ -17,22 +17,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 import { CampaignRowActions } from "./campaign-row-actions";
 
-function getStatusColor(status: string) {
+function getStatusVariant(status: string): VariantProps<typeof badgeVariants>["variant"] {
   switch (status) {
     case "draft":
-      return "bg-slate-100 text-slate-700";
+      return "neutral";
     case "queued":
-      return "bg-blue-100 text-blue-700";
+      return "cyan";
     case "sending":
-      return "bg-yellow-100 text-yellow-700";
+      return "yellow";
     case "sent":
-      return "bg-green-100 text-green-700";
+      return "lime";
     case "failed":
-      return "bg-red-100 text-red-700";
+      return "red";
     default:
-      return "bg-slate-100 text-slate-700";
+      return "neutral";
   }
 }
 
@@ -59,8 +61,8 @@ export default async function CampaignsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Campaigns</h1>
-          <p className="text-slate-600">
+          <h1 className="text-2xl">Campaigns</h1>
+          <p className="text-muted-foreground">
             Kelola dan kirim campaign email ke subscriber.
           </p>
         </div>
@@ -88,20 +90,20 @@ export default async function CampaignsPage() {
             <TableBody>
               {campaigns.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-slate-500">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground">
                     Belum ada campaign. Buat campaign pertama.
                   </TableCell>
                 </TableRow>
               ) : (
                 campaigns.map((campaign) => (
                   <TableRow key={campaign.id}>
-                    <TableCell className="font-medium">{campaign.name}</TableCell>
+                    <TableCell className="font-bold">{campaign.name}</TableCell>
                     <TableCell>{campaign.list.name}</TableCell>
                     <TableCell>{campaign.template.name}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${getStatusColor(campaign.status)}`}>
+                      <Badge variant={getStatusVariant(campaign.status)}>
                         {campaign.status}
-                      </span>
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {new Date(campaign.createdAt).toLocaleDateString("id-ID")}

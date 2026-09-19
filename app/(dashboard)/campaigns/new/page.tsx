@@ -31,8 +31,8 @@ export default async function NewCampaignPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Campaign Baru</h1>
-        <p className="text-slate-600">Buat campaign email baru.</p>
+        <h1 className="text-2xl">Campaign Baru</h1>
+        <p className="text-muted-foreground">Buat campaign email baru.</p>
       </div>
 
       <Card>
